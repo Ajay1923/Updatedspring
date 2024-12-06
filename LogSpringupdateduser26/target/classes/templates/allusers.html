@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All User Details</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Arial", sans-serif;
+            background: linear-gradient(to right, #FFD700, #FF6347);
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background-color: #581845;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            position: fixed;
+            top: 0;
+            left: 160px;
+            width: calc(100% - 160px);
+            z-index: 500;
+            box-sizing: border-box;
+        }
+        .logout-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: background-color 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #004d40;
+        }
+        .sidebar {
+            margin: 0;
+            padding: 10px;
+            width: 160px;
+            background: linear-gradient(to right, #FFD700, #FF6347);
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+        .sidebar h2 {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #ffffff;
+        }
+        .sidebar a {
+            display: block;
+            color: #ffffff;
+            padding: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .sidebar a.active,
+        .sidebar a:hover {
+            background-color: #004d40;
+        }
+        .content {
+            margin-left: 170px;
+            padding: 30px;
+            padding-top: 90px;
+            text-align: center;
+        }
+        .user-details-container {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px; /* Adjust width for a formal look */
+            margin: 40px auto; /* Centering the container */
+            text-align: left; /* Align text to the left */
+        }
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .search-box input[type="text"] {
+            padding: 10px;
+            width: 60%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+        .success-message {
+            color: green;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .button-group {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px;
+    gap: 10px; 
+}
+        .button-group button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00796b;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button-group button:hover {
+            background-color: #004d40;
+        }
+        .hidden {
+            display: none;
+        }
+        @media screen and (max-width: 500px) {
+            .header {
+                width: 100%;
+                left: 0;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 50px 5px;
+            }
+            .content {
+                margin-left: 0;
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        All User Details
+        <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
+    </div>
+    
+    <div class="sidebar">
+        <h2><a href="/file">File Upload</a></h2>
+        <h2><a href="/statistics">Statistics</a></h2>
+        <h2><a href="/settings">User Details</a></h2>
+           <h2><div th:if="${session.userRole != null and session.userRole.equalsIgnoreCase('Admin')}">
+       <a href="/allusers">All Users</a></div>
+    <div th:if="${session.userRole != null and !session.userRole.equalsIgnoreCase('Admin')}">
+   
+</div></h2>
+    </div>
+    
+
+    <div class="content">
+        <h1>All User Information</h1>
+        
+        <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <div class="search-box">
+            <form id="searchForm" action="/allusers" method="POST" onsubmit="return handleSearch()">
+                <input type="text" id="userSearch" name="userSearch" placeholder="Search by name, email, mobile number, or username...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <div class="user-details-container">
+            <center><h2>User Details</h2></center>
+            <form action="/Logging_cred" method="POST" onsubmit="return showConfirmation()">
+                <input type="hidden" id="userId" name="id" th:value="${selectedUser != null ? selectedUser.id : ''}" required>
+                <table style="width: 100%;">
+                    <tr>
+                        <td><label for="first_name">First Name:</label></td>
+                        <td><input type="text" id="first_name" name="firstName" th:value="${selectedUser != null ? selectedUser.firstName : ''}" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="middle_name">Middle Name:</label></td>
+                        <td><input type="text" id="middle_name" name="middleName" th:value="${selectedUser != null ? selectedUser.middleName : ''}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="last_name">Last Name:</label></td>
+                        <td><input type="text" id="last_name" name="lastName" th:value="${selectedUser != null ? selectedUser.lastName : ''}" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="date_of_birth">Date of Birth:</label></td>
+                        <td><input type="date" id="date_of_birth" name="dateOfBirth" th:value="${selectedUser != null ? selectedUser.dateOfBirth : ''}" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="gender">Gender:</label></td>
+                        <td>
+                            <select id="gender" name="gender" required>
+                                <option value="">Select</option>
+                                <option value="male" th:selected="${selectedUser != null && selectedUser.gender == 'male'}">Male</option>
+                                <option value="female" th:selected="${selectedUser != null && selectedUser.gender == 'female'}">Female</option>
+                                <option value="other" th:selected="${selectedUser != null && selectedUser.gender == 'other'}">Other</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="email">Email ID:</label></td>
+                        <td><input type="email" id="email" name="email" th:value="${selectedUser != null ? selectedUser.email : ''}" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="mobile_number">Mobile Number:</label></td>
+                        <td><input type="text" id="mobile_number" name="mobileNumber" th:value="${selectedUser != null ? selectedUser.mobileNumber : ''}" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="username">Username:</label></td>
+                        <td><input type="text" id="username" name="username" th:value="${selectedUser != null ? selectedUser.username : ''}" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="password">Password:</label></td>
+                        <td><input type="password" id="password" name="password" th:value="${selectedUser != null ? selectedUser.password : ''}" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="access">Access Level:</label></td>
+                        <td>
+                            <select id="access" name="access" required>
+                                <option value="">Select Access</option>
+                                <option value="admin" th:selected="${selectedUser != null && selectedUser.access == 'admin'}">Admin</option>
+                                <option value="user" th:selected="${selectedUser != null && selectedUser.access == 'user'}">User</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="button-group">	
+                    <button type="submit">Submit</button>
+                    <button type="button" onclick="clearForm()">Cancel</button>
+                    <button type="button" onclick="window.open('addusers', '_blank')">Add User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function clearForm() {
+            document.getElementById('first_name').value = '';
+            document.getElementById('middle_name').value = '';
+            document.getElementById('last_name').value = '';
+            document.getElementById('date_of_birth').value = '';
+            document.getElementById('gender').selectedIndex = 0;
+            document.getElementById('email').value = '';
+            document.getElementById('mobile_number').value = '';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('access').selectedIndex = 0;
+        }
+
+        function showConfirmation() {
+            return confirm('Are you sure you want to submit?');
+        }
+
+        function handleSearch() {
+            var searchValue = document.getElementById('userSearch').value;
+            if (searchValue.trim() === "") {
+                alert("Please enter a value to search.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New User</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Arial", sans-serif;
+            background: linear-gradient(to right, #FFD700, #FF6347);
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background-color: #581845;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 500;
+            box-sizing: border-box;
+        }
+        .content {
+            padding: 30px;
+            padding-top: 90px;
+            text-align: center;
+        }
+        .user-details-container {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .form-group {
+            margin: 10px 0;
+            width: 48%;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-group button {
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+        .button-group button:hover {
+            background-color: #004d40;
+        }
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Add New User Information</div>
+
+    <div class="content">
+        <h1>Add New User</h1>
+        <div class="user-details-container">
+            <div class="success-message" th:if="${message}" th:text="${message}"></div>
+            <div class="error-message" th:if="${error}" th:text="${error}"></div>
+
+            <form action="/registerUser" method="POST">
+                <div class="form-group">
+                    <label for="first_name">First Name: <span class="required">*</span></label>
+                    <input type="text" id="first_name" name="firstName" placeholder="Enter your first name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="middle_name">Middle Name:</label>
+                    <input type="text" id="middle_name" name="middleName" placeholder="Enter your middle name">
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="lastName" placeholder="Enter your last name">
+                </div>
+
+                <div class="form-group" style="width: 100%;">
+                    <label for="date_of_birth">Date of Birth:</label>
+                    <input type="date" id="date_of_birth" name="dateOfBirth">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email ID: <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile_number">Mobile Number:</label>
+                    <input type="tel" id="mobile_number" name="mobileNumber" placeholder="Enter your mobile number">
+                </div>
+
+                <div class="form-group" style="width: 100%;">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select your gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username: <span class="required">*</span></label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password: <span class="required">*</span></label>
+                    <input type="password" id="password" name="password" placeholder="Choose a password" required>
+                </div>
+
+                <div class="form-group" style="width: 100%;">
+                    <label for="access">Access Level:</label>
+                    <select id="access" name="access" required>
+                        <option value="">Select Access</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit">Add User</button>
+                    <button type="button" onclick="window.location.href='/allusers'">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showConfirmation() {
+            return confirm("Are you sure you want to add this user?");
+        }
+    </script>
+</body>
+</html>
